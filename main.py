@@ -39,24 +39,22 @@ def module_resolver(module_path):
 
         f.close()
 
-        if hasattr(result, 'body'):
-            for i in getattr(result, 'body'):
-                if type(i) == ast.FunctionDef:
-                    if not valid_function(i, False):
-                        isGood = False
+        for i in getattr(result, 'body', []):
+            if type(i) == ast.FunctionDef:
+                if not valid_function(i, False):
+                    isGood = False
 
-                        break
-                
-                elif type(i) == ast.ClassDef:
-                    for j in getattr(i, 'body'):
-                        if type(j) == ast.FunctionDef:
-                            if not valid_function(j, True):
-                                isGood = False
+                    break
+            
+            elif type(i) == ast.ClassDef:
+                for j in getattr(i, 'body'):
+                    if type(j) == ast.FunctionDef:
+                        if not valid_function(j, True):
+                            isGood = False
 
-                                break
+                            break
     except Exception as e:
         isGood = False
-        print('error')
 
     return 1 if not isGood else 0
 
