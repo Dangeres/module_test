@@ -7,22 +7,42 @@ import importlib
 def valid_function(data, isLower = True):
     letters = string.ascii_lowercase if isLower else string.ascii_uppercase
 
-    if getattr(data, 'name')[0] not in letters:
+    if getattr(data, 'name', ' ')[0] not in letters:
         return False
 
     return True
+
+
+queue = []
+
+
+def body_inspector(in_data):
+    answer = True
+
+    queue.append(in_data)
+
+    while len(queue) > 0:
+        raw_data = queue.pop(0)
+        data = raw_data['data']
+        come_from = raw_data['come_from']
+
+        if type(data) in [ast.FunctionDef]:
+            if come_from in [ast.ClassDef]:
+                if not valid_function(data, True):
+                    answer = False
+            elif come_from in [ast.FunctionDef]:
+                if not valid_function(data, False):
+                    answer = False
+        
+        for i in getattr(data, "body", []):
+            queue.append(
+                {
+                    "data": i,
+                    "come_from": type(data),
+                }
+            )
     
-
-
-def body_recourser(data, upper):
-    result = True
-
-    if hasattr(data, 'body'):
-        for i in getattr(data, 'body'):
-            if body_recourser(i, type(data)) is False:
-                result = False
-    
-    return result
+    return answer
 
 
 def module_resolver(module_path):
@@ -35,11 +55,14 @@ def module_resolver(module_path):
 
         data_file = f.read()
         
-        result = ast.parse(data_file)
+        result_parsing = ast.parse(data_file)
 
         f.close()
+    except Exception as e:
+        isGood = False
 
-        for i in getattr(result, 'body', []):
+    if False:
+        for i in getattr(result_parsing, 'body', []):
             if type(i) == ast.FunctionDef:
                 if not valid_function(i, False):
                     isGood = False
@@ -53,8 +76,14 @@ def module_resolver(module_path):
                             isGood = False
 
                             break
-    except Exception as e:
-        isGood = False
+    
+    isGood = isGood and body_inspector({
+        "data": result_parsing,
+        "come_from": ast.IsNot,
+    })
+
+    # print(1 if not isGood else 0)
+    # print(1 if not  else 0)
 
     return 1 if not isGood else 0
 
