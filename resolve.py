@@ -1,8 +1,6 @@
 import ast
 import string
 
-queue = []
-
 
 def valid_function(data, isLower = True):
     """
@@ -32,6 +30,8 @@ def body_inspector(data):
     """
 
     answer = True
+
+    queue = []
 
     queue.append(data)
 
