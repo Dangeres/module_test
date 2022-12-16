@@ -76,10 +76,10 @@ def module_resolver(module_path):
         data_file = f.read()
         
         result_parsing = ast.parse(data_file)
-
-        f.close()
     except Exception:
         result = False
+    finally:
+        f.close()
     
     result = result and body_inspector({
         "data": result_parsing,
