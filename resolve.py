@@ -5,6 +5,15 @@ queue = []
 
 
 def valid_function(data, isLower = True):
+    """
+        Проверяет корректность названия функции.
+
+        * params data - obj, объект проверки
+        * params isLower - bool, флаг проверки первого символа, если True, значит проверяем первую букву на нижний регистр.
+
+        return bool, результат проверки функции
+    """
+
     letters = string.ascii_lowercase if isLower else string.ascii_uppercase
 
     if getattr(data, 'name', ' ')[0] not in letters:
@@ -13,10 +22,18 @@ def valid_function(data, isLower = True):
     return True
 
 
-def body_inspector(in_data):
+def body_inspector(data):
+    """
+        Функция проверки каждого узла кода методом BFS.
+
+        * params data - obj, начальный объект проверки
+
+        return bool, результат глубокой проверки объекта
+    """
+
     answer = True
 
-    queue.append(in_data)
+    queue.append(data)
 
     while len(queue) > 0:
         raw_data = queue.pop(0)
@@ -43,6 +60,14 @@ def body_inspector(in_data):
 
 
 def module_resolver(module_path):
+    """
+        Главная функция проверки модуля.
+
+        * params module_path - str, путь до модуля проверки
+
+        return int[0, 1], результат проверки модуля
+    """
+
     result = True
 
     try:
